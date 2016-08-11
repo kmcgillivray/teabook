@@ -50,6 +50,7 @@ class MenuController
     tea_journal.entries.each do |entry|
       system "clear"
       puts entry.to_s
+      puts "\n"
       entry_submenu(entry)
     end
     system "clear"
