@@ -18,4 +18,14 @@ class TeaJournal
 
     entries.insert(index, Entry.new(tea_name, type, brewing_method))
   end
+
+  def remove_entry(tea_name, type, brewing_method)
+
+    entries.each_with_index do |entry, index|
+      if entry.tea_name == tea_name && entry.type == type && entry.brewing_method == brewing_method
+        entries.delete(entry)
+      end
+    end
+    
+  end
 end

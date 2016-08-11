@@ -36,4 +36,16 @@ RSpec.describe TeaJournal do
       expect(new_entry.brewing_method).to eq('Kyusu')
     end
   end
+
+  describe "#remove_entry" do
+    it "removes only one entry from the tea journal" do
+      journal = TeaJournal.new
+      journal.add_entry('Sencha', 'Green', 'Kyusu')
+      journal.add_entry('English Breakfast', 'Black', 'Ceramic teapot')
+      expect(journal.entries.size).to eq(2)
+
+      journal.remove_entry('English Breakfast', 'Black', 'Ceramic teapot')
+      expect(journal.entries.size).to eq(1)
+    end
+  end
 end
