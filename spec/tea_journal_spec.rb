@@ -77,4 +77,27 @@ RSpec.describe TeaJournal do
       end
     end
   end
+
+  describe "import from entries_2.csv" do
+    it "imports the corrent number of entries" do
+      journal.import_from_csv("entries_2.csv")
+      journal_size = journal.entries.size
+
+      expect(journal_size).to eq(3)
+    end
+
+    it "imports the the correct data for all entries" do
+      journal.import_from_csv("entries_2.csv")
+      expected_data = [
+        ["Silver Needle","White","Brew basket"],
+        ["Lu An Gua Pian","Green","Brew basket"],
+        ["Jasmine","Green","Brew basket"]
+      ]
+
+      journal.entries.each_with_index do |entry, index|
+        expected_entry_data = expected_data[index]
+        check_entry(entry, expected_entry_data[0], expected_entry_data[1], expected_entry_data[2])
+      end
+    end
+  end
 end
