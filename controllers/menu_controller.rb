@@ -10,10 +10,11 @@ class MenuController
   def main_menu
     puts "Main Menu — #{tea_journal.entries.count} entries"
     puts "1 – View all entries"
-    puts "2 – Create an entry"
-    puts "3 – Search for an entry"
-    puts "4 – Import entries from a CSV"
-    puts "5 – Exit"
+    puts "2 – View entry number n"
+    puts "3 – Create an entry"
+    puts "4 – Search for an entry"
+    puts "5 – Import entries from a CSV"
+    puts "6 – Exit"
     print "Enter your selection: "
 
     selection = gets.to_i
@@ -25,17 +26,21 @@ class MenuController
         main_menu
       when 2
         system "clear"
-        create_entry
+        view_entry
         main_menu
       when 3
         system "clear"
-        search_entries
+        create_entry
         main_menu
       when 4
         system "clear"
-        read_csv
+        search_entries
         main_menu
       when 5
+        system "clear"
+        read_csv
+        main_menu
+      when 6
         puts "Goodbye!"
         exit(0)
       else
@@ -53,6 +58,21 @@ class MenuController
     end
     system "clear"
     puts "End of entries"
+  end
+
+  def view_entry
+    print "Entry number to view: "
+    selection = gets.chomp.to_i
+    if selection == 0 || selection > tea_journal.entries.size
+      puts "Enter a valid entry number."
+      view_entry
+    else
+      entry = tea_journal.entries[selection - 1]
+      puts entry.to_s
+      puts "Press enter to return to the main menu"
+      gets.chomp
+      system "clear"
+    end
   end
 
   def create_entry
