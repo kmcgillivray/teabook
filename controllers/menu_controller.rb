@@ -5,6 +5,7 @@ class MenuController
 
   def initialize
     @tea_journal = TeaJournal.new
+    @tea_journal.import_from_csv("entries.csv")
   end
 
   def main_menu

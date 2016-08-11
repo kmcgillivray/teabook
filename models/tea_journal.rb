@@ -1,4 +1,5 @@
 require_relative 'entry'
+require 'csv'
 
 class TeaJournal
   attr_reader :entries
@@ -8,15 +9,7 @@ class TeaJournal
   end
 
   def add_entry(tea_name, type, brewing_method)
-    index = 0
-    entries.each do |entry|
-      if tea_name < entry.tea_name
-        break
-      end
-      index += 1
-    end
-
-    entries.insert(index, Entry.new(tea_name, type, brewing_method))
+    entries << Entry.new(tea_name, type, brewing_method)
   end
 
   def remove_entry(tea_name, type, brewing_method)
@@ -26,6 +19,15 @@ class TeaJournal
         entries.delete(entry)
       end
     end
-    
+
+  end
+
+  def import_from_csv(file_name)
+    csv_text = File.read(file_name)
+    csv = CSV.parse(csv_text, headers: true, skip_blanks: true)
+    csv.each do |row|
+      row_hash = row.to_hash
+      add_entry(row_hash["tea_name"], row_hash["type"], row_hash["brewing_method"])
+    end
   end
 end
