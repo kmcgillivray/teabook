@@ -77,4 +77,82 @@ RSpec.describe TeaJournal do
       end
     end
   end
+
+  describe "#iterative_search" do
+    it "returns an array of results" do
+      journal.import_from_csv("entries.csv")
+      entries = journal.iterative_search("Sencha")
+      expect(entries).to be_a Array
+    end
+
+    it "searches Teabook for a non-existent entry" do
+      journal.import_from_csv("entries.csv")
+      # Unlikely to find herbal teas in my tea journal...
+      entries = journal.iterative_search("Youthberry")
+      expect(entries.first).to be_nil
+    end
+
+    it "searches Teabook for Sencha" do
+      journal.import_from_csv("entries.csv")
+      entries = journal.iterative_search("Sencha")
+      first_result = entries.first
+      expect(first_result).to be_a Entry
+      check_entry(first_result, "Sencha", "Green", "Kyusu")
+    end
+
+    it "searches Teabook for English Breakfast" do
+      journal.import_from_csv("entries.csv")
+      entries = journal.iterative_search("English Breakfast")
+      first_result = entries.first
+      expect(first_result).to be_a Entry
+      check_entry(first_result, "English Breakfast", "Black", "Ceramic teapot")
+    end
+
+    it "searches Teabook for Meng Ding Huangya" do
+      journal.import_from_csv("entries.csv")
+      entries = journal.iterative_search("Meng Ding Huangya")
+      first_result = entries.first
+      expect(first_result).to be_a Entry
+      check_entry(first_result, "Meng Ding Huangya", "Yellow", "Gaiwan")
+    end
+
+    it "searches Teabook for Irish Breakfast" do
+      journal.import_from_csv("entries.csv")
+      entries = journal.iterative_search("Irish Breakfast")
+      first_result = entries.first
+      expect(first_result).to be_a Entry
+      check_entry(first_result, "Irish Breakfast", "Black", "Ceramic teapot")
+    end
+
+    it "searches Teabook for Matcha" do
+      journal.import_from_csv("entries.csv")
+      entries = journal.iterative_search("Matcha")
+      first_result = entries.first
+      expect(first_result).to be_a Entry
+      check_entry(first_result, "Matcha", "Green", "Tea bowl")
+    end
+
+    it "searches Teabook for Senchi" do
+      journal.import_from_csv("entries.csv")
+      entries = journal.iterative_search("Senchi")
+      expect(entries.first).to be_nil
+    end
+
+    it "returns multiple results for English Breakfast" do
+      journal.import_from_csv("entries.csv")
+      journal.add_entry("English Breakfast", "Black", "Tea basket")
+      entries = journal.iterative_search("English Breakfast")
+
+      expect(entries.size).to eq(2)
+    end
+
+    it "returns returns the correct data when finding multiple results" do
+      journal.import_from_csv("entries.csv")
+      journal.add_entry("English Breakfast", "Black", "Tea basket")
+      entries = journal.iterative_search("English Breakfast")
+
+      check_entry(entries.first, "English Breakfast", "Black", "Ceramic teapot")
+      check_entry(entries.last, "English Breakfast", "Black", "Tea basket")
+    end
+  end
 end

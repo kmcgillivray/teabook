@@ -30,4 +30,12 @@ class TeaJournal
       add_entry(row_hash["tea_name"], row_hash["type"], row_hash["brewing_method"])
     end
   end
+
+  def iterative_search(tea_name)
+    results = []
+    entries.each do |entry|
+      results << entry if entry.tea_name == tea_name
+    end
+    results
+  end
 end
