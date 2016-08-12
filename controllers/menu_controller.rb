@@ -4,8 +4,7 @@ class MenuController
   attr_reader :tea_journal
 
   def initialize
-    @tea_journal = TeaJournal.new
-    @tea_journal.import_from_csv("entries.csv")
+    @tea_journal = TeaJournal.new(DATA_FILE)
   end
 
   def main_menu
