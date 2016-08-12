@@ -152,6 +152,7 @@ class MenuController
     print "Updated brewing method: "
     brewing_method = gets.chomp
 
+    tea_journal.update_csv(entry, tea_name, type, brewing_method)
     entry.tea_name = tea_name if !tea_name.empty?
     entry.type = type if !type.empty?
     entry.brewing_method = brewing_method if !brewing_method.empty?

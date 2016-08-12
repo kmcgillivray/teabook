@@ -289,4 +289,34 @@ RSpec.describe TeaJournal do
     end
 
   end
+
+  describe "#update_csv" do
+
+    it "doesn't add data to the data file" do
+      reset_data
+      entry_to_edit = Entry.new('Sencha', 'Green', 'Kyusu')
+      journal.update_csv(entry_to_edit, 'Gyokuro', 'Green', 'Kyusu')
+      new_numrows = CSV.readlines(journal.data_file).size
+
+      expect(new_numrows).to eq(2)
+    end
+
+    it "updates the correct data" do
+      reset_data
+      entry_to_edit = Entry.new('Sencha', 'Green', 'Kyusu')
+      journal.update_csv(entry_to_edit, 'English Breakfast', 'Black', 'Ceramic teapot')
+
+      csv_array = CSV.read(journal.data_file)
+      expect(csv_array[1]).to eq(['English Breakfast', 'Black', 'Ceramic teapot'])
+    end
+
+    it "doesn't change values that are left blank" do
+      reset_data
+      entry_to_edit = Entry.new('Sencha', 'Green', 'Kyusu')
+      journal.update_csv(entry_to_edit, '', '', 'Gaiwan')
+
+      csv_array = CSV.read(journal.data_file)
+      expect(csv_array[1]).to eq(['Sencha', 'Green', 'Gaiwan'])
+    end
+  end
 end

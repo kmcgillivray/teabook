@@ -57,6 +57,23 @@ class TeaJournal
     end
   end
 
+  def update_csv(entry, tea_name, type, brewing_method)
+    csv_array = CSV.read(data_file)
+    csv_array.each do |row|
+      if row[0] == entry.tea_name && row[1] == entry.type && row[2] == entry.brewing_method
+        row[0] = tea_name if !tea_name.empty?
+        row[1] = type if !type.empty?
+        row[2] = brewing_method if !brewing_method.empty?
+      end
+    end
+
+    CSV.open(data_file, 'w') do |csv|
+      csv_array.each do |row|
+        csv << row
+      end
+    end
+  end
+
   def delete_from_csv(entry)
     csv_array = CSV.read(data_file)
     csv_array.each do |row|
