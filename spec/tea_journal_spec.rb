@@ -84,18 +84,44 @@ RSpec.describe TeaJournal do
       expect(new_numrows).to eq(original_numrows + 1)
     end
   end
-  #
-  # describe "#remove_entry" do
-  #   it "removes only one entry from the tea journal" do
-  #     journal.add_entry('Sencha', 'Green', 'Kyusu')
-  #     journal.add_entry('English Breakfast', 'Black', 'Ceramic teapot')
-  #     expect(journal.entries.size).to eq(2)
-  #
-  #     journal.remove_entry('English Breakfast', 'Black', 'Ceramic teapot')
-  #     expect(journal.entries.size).to eq(1)
-  #   end
-  # end
-  #
+
+  describe "#remove_entry" do
+    it "removes only one entry from the tea journal" do
+      reset_data
+      journal.add_entry('English Breakfast', 'Black', 'Ceramic teapot')
+      expect(journal.entries.size).to eq(2)
+
+      journal.remove_entry('English Breakfast', 'Black', 'Ceramic teapot')
+      expect(journal.entries.size).to eq(1)
+    end
+
+    it "deletes the entry from the data file" do
+      reset_data
+      journal.remove_entry('Sencha', 'Green', 'Kyusu')
+      new_numrows = CSV.readlines(journal.data_file).size
+
+      expect(new_numrows).to eq(1)
+    end
+
+    it "deletes the correct data from the journal entries" do
+      reset_data
+      journal.add_entry('English Breakfast', 'Black', 'Ceramic teapot')
+      journal.remove_entry('Sencha', 'Green', 'Kyusu')
+      first_entry = journal.entries.first
+
+      check_entry(first_entry, 'English Breakfast', 'Black', 'Ceramic teapot')
+    end
+
+    it "deletes the correct data from the data file" do
+      reset_data
+      journal.add_entry('English Breakfast', 'Black', 'Ceramic teapot')
+      journal.remove_entry('Sencha', 'Green', 'Kyusu')
+      csv_array = CSV.read(journal.data_file)
+
+      expect(csv_array[1]).to eq(['English Breakfast', 'Black', 'Ceramic teapot'])
+    end
+  end
+
   describe "#import_from_csv" do
     it "imports the corrent number of entries" do
       reset_data
@@ -126,12 +152,14 @@ RSpec.describe TeaJournal do
 
   describe "#iterative_search" do
     it "returns an array of results" do
+      reset_data
       journal.import_from_csv("entries.csv")
       entries = journal.iterative_search("Sencha")
       expect(entries).to be_a Array
     end
 
     it "searches Teabook for a non-existent entry" do
+      reset_data
       journal.import_from_csv("entries.csv")
       # Unlikely to find herbal teas in my tea journal...
       entries = journal.iterative_search("Youthberry")
@@ -139,6 +167,7 @@ RSpec.describe TeaJournal do
     end
 
     it "searches Teabook for Sencha" do
+      reset_data
       journal.import_from_csv("entries.csv")
       entries = journal.iterative_search("Sencha")
       first_result = entries.first
@@ -147,6 +176,7 @@ RSpec.describe TeaJournal do
     end
 
     it "searches Teabook for English Breakfast" do
+      reset_data
       journal.import_from_csv("entries.csv")
       entries = journal.iterative_search("English Breakfast")
       first_result = entries.first
@@ -155,6 +185,7 @@ RSpec.describe TeaJournal do
     end
 
     it "searches Teabook for Meng Ding Huangya" do
+      reset_data
       journal.import_from_csv("entries.csv")
       entries = journal.iterative_search("Meng Ding Huangya")
       first_result = entries.first
@@ -163,6 +194,7 @@ RSpec.describe TeaJournal do
     end
 
     it "searches Teabook for Irish Breakfast" do
+      reset_data
       journal.import_from_csv("entries.csv")
       entries = journal.iterative_search("Irish Breakfast")
       first_result = entries.first
@@ -171,6 +203,7 @@ RSpec.describe TeaJournal do
     end
 
     it "searches Teabook for Matcha" do
+      reset_data
       journal.import_from_csv("entries.csv")
       entries = journal.iterative_search("Matcha")
       first_result = entries.first
@@ -179,12 +212,14 @@ RSpec.describe TeaJournal do
     end
 
     it "searches Teabook for Senchi" do
+      reset_data
       journal.import_from_csv("entries.csv")
       entries = journal.iterative_search("Senchi")
       expect(entries.first).to be_nil
     end
 
     it "returns multiple results for English Breakfast" do
+      reset_data
       journal.import_from_csv("entries.csv")
       journal.add_entry("English Breakfast", "Black", "Tea basket")
       entries = journal.iterative_search("English Breakfast")
@@ -193,6 +228,7 @@ RSpec.describe TeaJournal do
     end
 
     it "returns returns the correct data when finding multiple results" do
+      reset_data
       journal.import_from_csv("entries.csv")
       journal.add_entry("English Breakfast", "Black", "Tea basket")
       entries = journal.iterative_search("English Breakfast")
@@ -208,7 +244,7 @@ RSpec.describe TeaJournal do
       reset_data
 
       new_entry = Entry.new('Gyokuro', 'Green', 'Kyusu')
-      journal.write_to_csv(journal.data_file, new_entry)
+      journal.write_to_csv(new_entry)
 
       new_numrows = CSV.readlines(journal.data_file).size
 
@@ -219,12 +255,37 @@ RSpec.describe TeaJournal do
       reset_data
 
       new_entry = Entry.new('English Breakfast', 'Black', 'Ceramic teapot')
-      journal.write_to_csv(journal.data_file, new_entry)
+      journal.write_to_csv(new_entry)
       journal.load_data
 
       last_entry = journal.entries.last
 
       check_entry(last_entry, 'English Breakfast', 'Black', 'Ceramic teapot')
+    end
+
+  end
+
+  describe "#delete_from_csv" do
+
+    it "deletes one entry from the data file" do
+      reset_data
+      entry_to_delete = Entry.new('Sencha', 'Green', 'Kyusu')
+      journal.delete_from_csv(entry_to_delete)
+      new_numrows = CSV.readlines(journal.data_file).size
+
+      expect(new_numrows).to eq(1)
+    end
+
+    it "deletes the correct data from the data file" do
+      reset_data
+      new_entry = Entry.new('Gyokuro', 'Green', 'Kyusu')
+      journal.write_to_csv(new_entry)
+
+      entry_to_delete = Entry.new('Sencha', 'Green', 'Kyusu')
+      journal.delete_from_csv(entry_to_delete)
+      csv_array = CSV.read(journal.data_file)
+
+      expect(csv_array[1]).to eq(['Gyokuro', 'Green', 'Kyusu'])
     end
 
   end
