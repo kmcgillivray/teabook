@@ -15,6 +15,7 @@ class MenuController
     puts "3 – Search for an entry"
     puts "4 – Import entries from a CSV"
     puts "5 – Exit"
+    puts "1776 – Boston tea party"
     print "Enter your selection: "
 
     selection = gets.to_i
@@ -39,6 +40,10 @@ class MenuController
       when 5
         puts "Goodbye!"
         exit(0)
+      when 1776
+        system "clear"
+        puts "To the revolution!"
+        throw_tea_overboard
       else
         system "clear"
         puts "Sorry, that is not a valid input"
@@ -110,6 +115,14 @@ class MenuController
       puts "#{file_name} is not a valid CSV file, please enter the name of a valid CSV file"
       read_csv
     end
+  end
+
+  def throw_tea_overboard
+    tea_journal.entries.clear
+    puts "A tempest in a teacup! Threw out all the tea!"
+    puts "\n"
+
+    main_menu
   end
 
   def entry_submenu(entry)
