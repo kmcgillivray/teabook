@@ -123,6 +123,7 @@ class MenuController
 
       when "n"
       when "d"
+        system "clear"
         delete_entry(entry)
       when "e"
         edit_entry(entry)
@@ -138,8 +139,9 @@ class MenuController
   end
 
   def delete_entry(entry)
-    tea_journal.entries.delete(entry)
-    puts "#{entry.name} has been deleted"
+    tea_journal.remove_entry(entry.tea_name, entry.type, entry.brewing_method)
+    puts "#{entry.tea_name} has been deleted"
+    main_menu
   end
 
   def edit_entry(entry)
