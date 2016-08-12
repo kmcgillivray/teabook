@@ -74,9 +74,42 @@ class MenuController
   end
 
   def search_entries
+    print "Search by name: "
+    tea_name = gets.chomp
+
+    matches = tea_journal.iterative_search(tea_name)
+    system "clear"
+
+    if matches
+      matches.each do |entry|
+        system "clear"
+        puts entry.to_s
+        puts "\n"
+        entry_submenu(entry)
+      end
+      system "clear"
+      puts "End of entries"
+    end
   end
 
   def read_csv
+    print "Enter CSV file to import: "
+    file_name = gets.chomp
+
+    if file_name.empty?
+      system "clear"
+      puts "No CSV file read"
+      main_menu
+    end
+
+    begin
+      entry_count = tea_journal.import_from_csv(file_name).count
+      system "clear"
+      puts "#{entry_count} new entries added from #{file_name}"
+    rescue
+      puts "#{file_name} is not a valid CSV file, please enter the name of a valid CSV file"
+      read_csv
+    end
   end
 
   def entry_submenu(entry)
@@ -91,7 +124,10 @@ class MenuController
 
       when "n"
       when "d"
+        delete_entry(entry)
       when "e"
+        edit_entry(entry)
+        entry_submenu(entry)
       when "m"
         system "clear"
         main_menu
@@ -100,5 +136,27 @@ class MenuController
         puts "#{selection} is not a valid input"
         entry_submenu(entry)
     end
+  end
+
+  def delete_entry(entry)
+    tea_journal.entries.delete(entry)
+    puts "#{entry.name} has been deleted"
+  end
+
+  def edit_entry(entry)
+    print "Updated name: "
+    tea_name = gets.chomp
+    print "Updated type: "
+    type = gets.chomp
+    print "Updated brewing method: "
+    brewing_method = gets.chomp
+
+    entry.tea_name = tea_name if !tea_name.empty?
+    entry.type = type if !type.empty?
+    entry.brewing_method = brewing_method if !brewing_method.empty?
+    system "clear"
+
+    puts "Updated entry"
+    puts entry
   end
 end
