@@ -17,6 +17,6 @@ Teabook is a command line tea journal written in ruby. Track information about y
 
 ## To do
 
-[] Generate an empty data file that isn't tracked in Git (rather than downloading my personal data file)
-[] Add additional tea data: date, steeping notes, origin and source
-[] Make executable gem?
+- [ ] Generate an empty data file that isn't tracked in Git (rather than downloading my personal data file)
+- [ ] Add additional tea data: date, steeping notes, origin and source
+- [ ] Make executable gem?
